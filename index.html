@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Вход выполнен</title>
+<style>
+  body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: #f6f4ef;
+         font: 18px/1.45 system-ui, sans-serif; color: #1f2a26; text-align: center; padding: 16px; }
+  a { display: inline-block; margin-top: 16px; padding: 14px 24px; border-radius: 14px;
+      background: #2f5d50; color: #fff; text-decoration: none; font-weight: 700; }
+</style>
+</head>
+<body>
+<main>
+  <p>Вход через Яндекс выполнен.<br>Возвращаемся в приложение…</p>
+  <a id="back" href="#">Вернуться в приложение</a>
+</main>
+<script>
+  // Страница-посредник для «Базы клиентов».
+  // Яндекс присылает ключ в адресе после #. Ключ никуда не отправляется:
+  // на телефоне передаётся в приложение, в браузере ПК — окну, которое открыло вход.
+  var hash = location.hash;
+  var appUrl = 'ru.klientbaza.app://auth' + hash;
+  document.getElementById('back').href = appUrl;
+  // Ключ получают только наши адреса (ПК-версия и разработка), чужой сайт его не увидит.
+  var OUR = ['https://3abyjioh.github.io', 'http://localhost:5180'];
+  if (window.opener) {
+    OUR.forEach(function (origin) { window.opener.postMessage(hash, origin); });
+    window.close();
+  } else {
+    location.replace(appUrl);
+  }
+</script>
+</body>
+</html>
