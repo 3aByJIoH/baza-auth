@@ -22,11 +22,14 @@
     «Открывать по умолчанию» → включите «Открывать поддерживаемые ссылки».</small>
 </main>
 <script>
-  // Страница-посредник для «Базы клиентов».
-  // Яндекс присылает ключ в адресе после #. Ключ никуда не отправляется:
+  // Страница-посредник для «Базы клиентов». Ответ Яндекса никуда не отправляется:
   // на телефоне передаётся в приложение, в браузере ПК — окну, которое открыло вход.
+  // Ответ бывает после # (ключ: браузер на ПК и старые версии приложения)
+  // и после ? (код подтверждения: приложение 1.5 и новее).
   var hash = location.hash;
-  var state = new URLSearchParams(hash.slice(1)).get('state') || '';
+  var query = location.search.slice(1);
+  var params = new URLSearchParams(query + '&' + hash.slice(1));
+  var state = params.get('state') || '';
   var back = document.getElementById('back');
 
   // Ключ получают только наши адреса (ПК-версия и разработка), чужой сайт его не увидит.
@@ -38,7 +41,7 @@
     // Версия 1.5 и новее. Обычно Android сразу открывает приложение по этому адресу
     // (проверенная ссылка), и страница даже не показывается. Если показалась — передаём
     // ключ адресным вызовом: его получит только приложение с пакетом ru.klientbaza.app.
-    var url = 'intent://3abyjioh.github.io/baza-auth/?' + hash.slice(1) +
+    var url = 'intent://3abyjioh.github.io/baza-auth/?' + (query || hash.slice(1)) +
       '#Intent;scheme=https;package=ru.klientbaza.app;end';
     back.href = url;
     document.getElementById('help').hidden = false;
